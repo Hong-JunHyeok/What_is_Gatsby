@@ -170,4 +170,35 @@ export default function Home() {
 > # a태그는 그럼 쓸모가 없나요?
 > 아닙니다! 외부링크로 이동할때 a태그를 사용합니다.
 
+# 🎨 Gatsby 스타일링
+tutorial-part-two라는 폴더에 gatsby프로젝트를 하나 더 만들어보자.
+```
+gatsby new tutorial-part-two https://github.com/gatsbyjs/gatsby-starter-hello-world
+```
 
+src안에 `styles`라는 폴더를 만들고 그 안에 `global.css`라는 파일을 만들어보자.
+
+글로벌 스타일링을 해볼건데, 이는 프로젝트에 전체적으로 사용할 스타일을 지정하는 것이다. 예를들어 타이포그래피라든지 색깔이나 그런것들 말이다.
+
+```css
+html {
+  background-color: lavenderblush;
+}
+```
+다음 속성을 `global.css`에 추가해보자.
+
+이제 `gatsby-browser.js`라는 파일을 만들어보자.
+
+이 파일은 루트폴더에 존재해야 한다.
+
+**이제 최근에 만든 global.css를 gatsby-browser.js에 import해주자.**
+
+> server을 껐다가 다시 켜보자.
+
+![image](https://user-images.githubusercontent.com/48292190/115964147-f5d74700-a55d-11eb-9259-9ce6c44597f3.png)
+
+그러면 이렇게 전역적으로 background-color가 lavenderblush가 된것을 확인할 수 있다.
+
+> 이렇게 gatsby-browser.js를 사용해서 전역 스타일을 적용하는 방법도 있지만 공유 레이아웃에 스타일을 적용하는 방법도 있다.
+
+# 🤷‍♀️ CSS 모듈
