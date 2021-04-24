@@ -1,5 +1,10 @@
 import React from "react"
+import { Link } from "gatsby"
 
 export default function Home() {
-  return <div>드디어 제대로 작동하는군요!</div>
+  return (
+    <>
+      <Link to="/about">About으로 이동합니다!</Link>
+    </>
+  )
 }
