@@ -81,8 +81,18 @@ export default function Home() {
 우리가 리액트를 조금이라도 해봤다면 이 코드가 뭐하는 아이인지 다 알것이다.
 **그렇다면 우리는 리액트 프로젝트를 진행했던것처럼 Hello World를 Hello Gatsby로 변경해서 저장후 웹사이트에서 변화를 관찰해보자.**
 
-> **저장후 바로 리로딩이 안돼요!**
-> 제 생각에 이 문제는 gatsby의 오류라고 생각합니다. 버전을 다운드레이드 하거나, 불편하더라도 여러번(2~3번) 저장 후 보면 리로딩이 되어 있습니다. 
+<del>
+저장후 바로 리로딩이 안돼요!
+제 생각에 이 문제는 gatsby의 오류라고 생각합니다. 버전을 다운드레이드 하거나, 불편하더라도 여러번(2~3번) 저장 후 보면 리로딩이 되어 있습니다. 
+</del>
+
+# 핫로딩 문제 해결
+
+webpack dev server가 핫 모듈 교체를 위해 0.0.0.0을 localhost로 인식하지 못하는 문제
+```
+gatsby develop --host localhost --port 8000
+```
+위와 같이 실행하면 문제 해결
 
 ```javascript
 import React from "react"
