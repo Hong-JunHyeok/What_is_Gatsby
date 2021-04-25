@@ -243,9 +243,64 @@ export default function Container({ children }) {
 이렇게 작업을 해준 다음에 pages에 만든 컴포넌트를 연결해주자.
 
 ```javascript
-import React from "react"
-import Container from "../components/container"
+import React from "react";
+import Container from "../components/container";
 export default function About() {
+  return (
+    <Container>
+      <h1>About CSS Modules</h1>
+      <p>CSS Modules are cool</p>
+    </Container>
+  );
+}
+```
+
+이렇게 해주고 http://localhost:8000/about 에 접속해보면,
+![image](https://user-images.githubusercontent.com/48292190/115991018-4489ed00-a601-11eb-8cc9-5878c26627b2.png)
+
+정상적으로 스타일이 적용된 모습을 볼 수 있다.
+
+## 🙃 CSS 모듈을 사용하여 구성 요소 스타일 지정
+
+`pages`에 `about.module.css`를 만들어보자.
+
+```css
+.user {
+  display: flex;
+  align-items: center;
+  margin: 0 auto 12px auto;
+}
+.user:last-child {
+  margin-bottom: 0;
+}
+.avatar {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 96px;
+  margin: 0;
+}
+.description {
+  flex: 1;
+  margin-left: 18px;
+  padding: 12px;
+}
+.username {
+  margin: 0 0 12px 0;
+  padding: 0;
+}
+.excerpt {
+  margin: 0;
+}
+```
+
+그 다음 about페이지에 import를 해주도록 하자.
+```javascript
+import React from "react"
+import Container from "../components/containers"
+import * as styles from './about.module.css';
+
+export default function About() {
+    console.log(styles);
   return (
     <Container>
       <h1>About CSS Modules</h1>
@@ -254,7 +309,7 @@ export default function About() {
   )
 }
 ```
-이렇게 해주고 http://localhost:8000/about 에 접속해보면,
-![image](https://user-images.githubusercontent.com/48292190/115991018-4489ed00-a601-11eb-8cc9-5878c26627b2.png)
 
-정상적으로 스타일이 적용된 모습을 볼 수 있다.
+#### 그러면 콘솔창에 다음과 같이 찍힐것이다.
+
+![image](https://user-images.githubusercontent.com/48292190/116013555-c282de00-a66b-11eb-9a61-b8f7ebc55f41.png)
