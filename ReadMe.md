@@ -167,11 +167,15 @@ export default function Home() {
 ```
 
 `Link`를 사용하게 되면 Gatsby프로젝트 내에서 라우팅을 할때 페이지를 리로딩하지 않고 이동하게 된다.
+
 > # a태그는 그럼 쓸모가 없나요?
+>
 > 아닙니다! 외부링크로 이동할때 a태그를 사용합니다.
 
 # 🎨 Gatsby 스타일링
+
 tutorial-part-two라는 폴더에 gatsby프로젝트를 하나 더 만들어보자.
+
 ```
 gatsby new tutorial-part-two https://github.com/gatsbyjs/gatsby-starter-hello-world
 ```
@@ -185,6 +189,7 @@ html {
   background-color: lavenderblush;
 }
 ```
+
 다음 속성을 `global.css`에 추가해보자.
 
 이제 `gatsby-browser.js`라는 파일을 만들어보자.
@@ -202,3 +207,54 @@ html {
 > 이렇게 gatsby-browser.js를 사용해서 전역 스타일을 적용하는 방법도 있지만 공유 레이아웃에 스타일을 적용하는 방법도 있다.
 
 # 🤷‍♀️ CSS 모듈
+
+CSS를 모듈화해서 구성 요소 지향 방식으로 스타일을 처리하는 다양한 방법에 대해 알아보자.
+
+> CSS 모듈 의 모든 클래스 이름 및 애니메이션 이름은 기본적으로 로컬 범위가되어있는 CSS 파일입니다.
+
+CSS모듈은 CSS를 정상적으로 작성할 수 있지만 훨씬 안전하기 때문에 인기가 많다.
+
+### 🎨 직접 해봅시다.
+
+1.src/components를 만든 다음에, 새 디렉터리 `container.js`와 `container.module.css`를 만들자.
+
+![image](https://user-images.githubusercontent.com/48292190/115990923-e6f5a080-a600-11eb-9cb8-701f1c76e542.png)
+
+이제 container.js에서 다음과 같이 코딩해주자.
+
+```javascript
+import React from "react";
+import * as containerStyles from "./container.module.css";
+
+export default function Container({ children }) {
+  return <div className={containerStyles.container}>{children}</div>;
+}
+```
+
+다음은 css이다.
+
+```css
+.container {
+  margin: 3rem auto;
+  max-width: 600px;
+}
+```
+
+이렇게 작업을 해준 다음에 pages에 만든 컴포넌트를 연결해주자.
+
+```javascript
+import React from "react"
+import Container from "../components/container"
+export default function About() {
+  return (
+    <Container>
+      <h1>About CSS Modules</h1>
+      <p>CSS Modules are cool</p>
+    </Container>
+  )
+}
+```
+이렇게 해주고 http://localhost:8000/about 에 접속해보면,
+![image](https://user-images.githubusercontent.com/48292190/115991018-4489ed00-a601-11eb-8cc9-5878c26627b2.png)
+
+정상적으로 스타일이 적용된 모습을 볼 수 있다.
