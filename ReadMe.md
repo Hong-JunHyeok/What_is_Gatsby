@@ -593,4 +593,42 @@ export default function Layout({ children }) {
 
 ![image](https://user-images.githubusercontent.com/48292190/116031270-4a7edd00-a698-11eb-809f-a8657ec01d7b.png)
 
+# Gatsby에서의 데이터
 
+여기까지 오셨다면 Gatsby의 절반은 왔습니다. 조금만 더 힘내주세요!
+사실, 지금까지 여러분이 배운 내용은 `React.js`를 사용하는 방법을 배운것입니다.
+
+**이제부터는 본격적으로 Gatsby를 사용해봅시다.**
+
+> 데이터 레이어는 Markdown, WordPress, 헤드리스 CMS 및 기타 데이터 소스에서 사이트를 구축 할 수있는 Gatsby의 강력한 기능이다.
+
+Gatsby의 데이터레이어는 graphQL로 구동됩니다.
+
+무슨말인지 모르시겠다구요? **자세히 살펴봅시다.**
+
+웹 사이트는 HTML, CSS, JS 및 데이터의 네 부분으로 구성되죠! 이 중, 데이터를 한번 자세히 살펴보도록 하겠습니다.
+
+우리가 지금까지 HTML,CSS,JS를 알아봤었는데 데이터를 시작해보는겁니다!
+
+Gatsby에서 데이터란
+
+### "React 구성 요소 외부에있는 모든 것"입니다.
+
+무슨 느낌인지 아시겠나요?
+
+우리는 지금까지 파일에서 직접 이미지,텍스트를 추가하고 웹페이지를 만들었습니다. 물론, 좋은 방법이죠! 하지만 종종 외부의 데이터를 필요로 할 때가 있습니다. 예를 들어서 `코로나19`의 데이터를 가져오고 싶다면요?
+그럴때 외부 데이터를 필요로 하는거랍니다.
+
+## Gatsby의 데이터 계층이 GraphQL을 사용하여 데이터를 구성 요소로 가져 오는 방법
+
+React 컴포넌트에서 데이터를 가져올때, 요즘 인기있는 기술인 `graphQL`을 사용하는 것입니다.
+
+> GraphQL은 제품 엔지니어가 필요한 데이터를 구성 요소로 가져올 수 있도록 Facebook에서 개발되었습니다 .
+
+Gatsby는 GraphQL을 사용하여 구성 요소가 필요한 데이터를 선언 할 수 있도록합니다.
+
+자, 이제 새로운 내용을 배우니까 새 예제 사이트를 만들어볼까요?
+```
+gatsby new tutorial-part-four https://github.com/gatsbyjs/gatsby-starter-hello-world
+cd tutorial-part-four
+```
