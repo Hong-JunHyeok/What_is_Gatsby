@@ -797,3 +797,70 @@ export const query = graphql`
 잘 가져와진 모습을 볼 수 있습니다.
 여기서 **GrapghQL을 처음 접하는 사람들은 생소해고 이해가 잘 가지 않을것입니다.**
 
+추후에 심도있게 다룰테니 이런식으로 흘러가는구나~ 정도만 알아두시길 바랍니다.
+
+## 😋 StaticQuery 사용
+
+static쿼리를 사용하게 되면 페이지가 아닌 구성요소가 쿼리를 통해 데이터를 검색할 수 있습니다.
+
+> # 구성요소란?
+>
+> 구성요소는 하나의 컴포넌트라고 생각하시면 됩니다.
+
+StaticQuery는 hooks도 지원합니다.
+그럼 어떤식으로 사용되는지 보도록하죠!
+
+```javascript
+import React from "react";
+import { css } from "@emotion/react";
+import { useStaticQuery, Link, graphql } from "gatsby";
+import { rhythm } from "../utils/typography";
+
+export default function Layout({ children }) {
+  const data = useStaticQuery(
+    graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+          }
+        }
+      }
+    `
+  );
+  return (
+    <div
+      css={css`
+        margin: 0 auto;
+        max-width: 700px;
+        padding: ${rhythm(2)};
+        padding-top: ${rhythm(1.5)};
+      `}
+    >
+      <Link to={`/`}>
+        <h3
+          css={css`
+            margin-bottom: ${rhythm(2)};
+            display: inline-block;
+            font-style: normal;
+          `}
+        >
+          {data.site.siteMetadata.title}
+        </h3>
+      </Link>
+      <Link
+        to={`/about/`}
+        css={css`
+          float: right;
+        `}
+      >
+        About
+      </Link>
+      {children}
+    </div>
+  );
+}
+```
+이렇게 구성요소에서 데이터를 가져오고 사용할 수 있습니다.
+
+> 대~충 사용법을 알아봤으니 다음챕터에서 소스 플러그인과 함께 GraphQL을 사용하여 데이터를 Gatsby 사이트로 가져 오는 방법에 대해 알아봅시다.
