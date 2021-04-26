@@ -537,3 +537,60 @@ export default function Contact() {
 ![image](https://user-images.githubusercontent.com/48292190/116030501-a5afd000-a696-11eb-8d12-1a7f37d13b9f.png)
 
 아까 `index.js`랑 디자인이 통일된 느낌이 훨씬 좋아졌습니다.
+
+## 🖐 레이아웃에 제목 추가하는 방법?
+
+```javascript
+import React from "react";
+export default function Layout({ children }) {
+  return (
+    <div style={{ margin: `3rem auto`, maxWidth: 650, padding: `0 1rem` }}>
+      <h1>MySweetSite</h1>
+      {children}
+    </div>
+  );
+}
+```
+
+그냥 레이아웃 컴포넌트에 `<h1>`안에 적용만 해도 모든 페이지에 다 적용되는 것을 볼 수 있습니다.
+
+## ✋ 페이지 간 NavLink추가
+
+`gatsby`에서 지원하는 기능중 하나인 `Link`라는 기능을 사용해보겠습니다.
+
+Layout컴포넌트에 다음과 같이 작성해주세요
+
+```javascript
+import React from "react";
+import { Link } from "gatsby";
+
+const ListLink = (props) => (
+  <li style={{ display: `inline-block`, marginRight: `1rem` }}>
+    <Link to={props.to}>{props.children}</Link>
+  </li>
+);
+
+export default function Layout({ children }) {
+  return (
+    <div style={{ margin: `3rem auto`, maxWidth: 650, padding: `0 1rem` }}>
+      <header style={{ marginBottom: `1.5rem` }}>
+        <Link to="/" style={{ textShadow: `none`, backgroundImage: `none` }}>
+          <h3 style={{ display: `inline` }}>MySweetSite</h3>
+        </Link>
+        <ul style={{ listStyle: `none`, float: `right` }}>
+          <ListLink to="/">Home</ListLink>
+          <ListLink to="/about/">About</ListLink>
+          <ListLink to="/contact/">Contact</ListLink>
+        </ul>
+      </header>
+      {children}
+    </div>
+  );
+}
+```
+
+이제 웹페이지의 형태를 점점 갖춰가고 있습니다!
+
+![image](https://user-images.githubusercontent.com/48292190/116031270-4a7edd00-a698-11eb-809f-a8657ec01d7b.png)
+
+
