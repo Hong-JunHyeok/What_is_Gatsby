@@ -425,6 +425,7 @@ module.exports = {
 src/utils에 typography.js라는 파일을 만들어봅시다.
 
 다음과 같이 작성해주세요!
+
 ```javascript
 import Typography from "typography";
 import fairyGateTheme from "typography-theme-fairy-gates";
@@ -444,3 +445,95 @@ export default typography;
 
 잘 적용이 되었네요!
 
+이제 page를 몇개 더 만들 예정입니다.
+`about.js`,`contact.js`를 만들어주세요. **그런 다음 코드를 작성해주세요**
+
+```javascript
+//about.js
+import React from "react";
+
+export default function About() {
+  return (
+    <div>
+      <h1>About me</h1>
+      <p>
+        I’m good enough, I’m smart enough, and gosh darn it, people like me!
+      </p>
+    </div>
+  );
+}
+```
+
+```javascript
+//contact.js
+import React from "react";
+
+export default function Contact() {
+  return (
+    <div>
+      <h1>I'd love to talk! Email me at the address below</h1>
+      <p>
+        <a href="mailto:me@example.com">me@example.com</a>
+      </p>
+    </div>
+  );
+}
+```
+
+이제 만들었던 페이지를 한번 볼까요?
+![image](https://user-images.githubusercontent.com/48292190/116030340-4d78ce00-a696-11eb-921d-93e767437abc.png)
+음... 잘 나왔지만 Layout이 index.js랑 통일되었으면 좋겠습니다.
+그래서 컴포넌트를 하나 만들어서 레이아웃을 통일하는 방법을 알아봅시다.
+
+`src/components`라는 폴더에 `layout.js`를 만들어줍시다.
+
+```javascript
+import React from "react";
+export default function Layout({ children }) {
+  return (
+    <div style={{ margin: `3rem auto`, maxWidth: 650, padding: `0 1rem` }}>
+      {children}
+    </div>
+  );
+}
+```
+
+그 다음에 만든 레이아웃을 적용해봅시다.
+
+```javascript
+import React from "react";
+import Layout from "../components/layout";
+
+export default function About() {
+  return (
+    <Layout>
+      <h1>About me</h1>
+      <p>
+        I’m good enough, I’m smart enough, and gosh darn it, people like me!
+      </p>
+    </Layout>
+  );
+}
+```
+
+```javascript
+import React from "react";
+import Layout from "../components/layout";
+
+export default function Contact() {
+  return (
+    <Layout>
+      <h1>I'd love to talk! Email me at the address below</h1>
+      <p>
+        <a href="mailto:me@example.com">me@example.com</a>
+      </p>
+    </Layout>
+  );
+}
+```
+
+이제 페이지를 볼까요?
+
+![image](https://user-images.githubusercontent.com/48292190/116030501-a5afd000-a696-11eb-8d12-1a7f37d13b9f.png)
+
+아까 `index.js`랑 디자인이 통일된 느낌이 훨씬 좋아졌습니다.
