@@ -294,22 +294,153 @@ export default function About() {
 ```
 
 그 다음 about페이지에 import를 해주도록 하자.
+
 ```javascript
-import React from "react"
-import Container from "../components/containers"
-import * as styles from './about.module.css';
+import React from "react";
+import Container from "../components/containers";
+import * as styles from "./about.module.css";
 
 export default function About() {
-    console.log(styles);
+  console.log(styles);
   return (
     <Container>
       <h1>About CSS Modules</h1>
       <p>CSS Modules are cool</p>
     </Container>
-  )
+  );
 }
 ```
 
 #### 그러면 콘솔창에 다음과 같이 찍힐것이다.
 
 ![image](https://user-images.githubusercontent.com/48292190/116013555-c282de00-a66b-11eb-9a61-b8f7ebc55f41.png)
+
+> 말투좀 바꿀게요...🤗
+
+## Module이 적용이 안되요!
+
+그런 경우에는 파일의 확장자를 확인해보세요!
+`.module.css`여야만 합니다. `.css`는 CSS 모듈이 적용되지 않습니다.
+
+`import * as styles from './about.css';`
+
+## 그럼 한번 제대로 사용해볼까요?
+
+```javascript
+import React from "react";
+import Container from "../components/containers";
+import * as styles from "./about.module.css";
+
+const User = (props) => (
+  <div className={styles.user}>
+    <img src={props.avatar} className={styles.avatar} alt="" />
+    <div className={styles.description}>
+      <h2 className={styles.username}>{props.username}</h2>
+      <p className={styles.excerpt}>{props.excerpt}</p>
+    </div>
+  </div>
+);
+
+export default function About() {
+  console.log(styles);
+  return (
+    <Container>
+      <h1>About CSS Modules</h1>
+      <p>CSS Modules are cool</p>
+      <User
+        username="Maria Randall"
+        avatar="https://raw.githubusercontent.com/gatsbyjs/gatsby/master/docs/docs/tutorial/part-two/pexels-daniel-xavier-1102341.jpg"
+        excerpt="I'm Maria Randall. Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+      />
+      <User
+        username="Daniela Dewitt"
+        avatar="https://raw.githubusercontent.com/gatsbyjs/gatsby/master/docs/docs/tutorial/part-two/pexels-guilherme-almeida-1858175.jpg"
+        excerpt="I'm Daniela Dewitt. Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+      />
+    </Container>
+  );
+}
+```
+
+다음과 같이 about.js에 입력해주세요.
+
+그러면 /about에는 다음과 같은 화면이 보일겁니다.
+![image](https://user-images.githubusercontent.com/48292190/116028226-a5610600-a691-11eb-96c6-b23d333dbeac.png)
+
+어느정도 감을 잡았지요?
+
+## CSS in JS란?
+
+> CSS-in-JS는 컴포넌트 지향 스타일링 접근 방식이다.
+
+가장 일반적으로 JavaScript를 사용하여 CSS를 인라인으로 구성 하는 패턴 이다.
+`Emotion`이나 `Styled-components`등이 있습니다.
+
+## 중첩된 레이아웃 구성 요소 만들기
+
+> Gatsby 플러그인과 "레이아웃"구성 요소 생성에 대해 알아봅시다.
+
+> ## Gatsby 플러그인이란?
+>
+> Gatsby 사이트에 기능을 추가하는 데 도움이되는 JavaScript 패키지입니다.
+
+새로운 예제를 위해서 새로운 프로젝트를 빌드해봅시다.
+
+```
+gatsby new tutorial-part-three https://github.com/gatsbyjs/gatsby-starter-hello-world
+
+cd tutorial-part-three
+```
+
+위 작업을 완료한 다음에 우리가 설치할 플러그인은 `Typography.js`이다.
+`Typography.js`는 사이트의 타이포그래피에 대한 글로벌 기본 스타일을 생성하는 JavaScript 라이브러리입니다.
+
+😊 위 플러그인을 다운받아 봅시다.
+
+```
+yarn add gatsby-plugin-typography react-typography typography typography-theme-fairy-gates
+```
+
+다운받을게 생각보다 많네요;; 🤨
+
+작업이 완료되었으면 gatsby-config.js에 다음과 같이 작성해봅시다.
+
+```javascript
+module.exports = {
+  plugins: [
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/utils/typography`,
+      },
+    },
+  ],
+};
+```
+
+**gatsby-config.js라는 파일은 개츠비가 자동으로 인식할 수 있는 또 다른 특수 파일입니다.**
+
+자세한 설명은 코딩 후 설명해드리겠습니다.
+
+src/utils에 typography.js라는 파일을 만들어봅시다.
+
+다음과 같이 작성해주세요!
+```javascript
+import Typography from "typography";
+import fairyGateTheme from "typography-theme-fairy-gates";
+
+const typography = new Typography(fairyGateTheme);
+export const { scale, rhythm, options } = typography;
+export default typography;
+```
+
+그 다음 개발서버를 열고 한번 Elements를 봅시다
+![image](https://user-images.githubusercontent.com/48292190/116029475-6a140680-a694-11eb-8ddd-a14ad34741e0.png)
+
+다음과 같이 뜨는것을 볼 수 있죠?
+
+이게 잘 적용되었는지 확인해봅시다.
+![image](https://user-images.githubusercontent.com/48292190/116029605-a6476700-a694-11eb-8c6c-b44b0b4824d3.png)
+
+잘 적용이 되었네요!
+
