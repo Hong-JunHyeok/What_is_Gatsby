@@ -628,7 +628,172 @@ React 컴포넌트에서 데이터를 가져올때, 요즘 인기있는 기술�
 Gatsby는 GraphQL을 사용하여 구성 요소가 필요한 데이터를 선언 할 수 있도록합니다.
 
 자, 이제 새로운 내용을 배우니까 새 예제 사이트를 만들어볼까요?
+
 ```
 gatsby new tutorial-part-four https://github.com/gatsbyjs/gatsby-starter-hello-world
 cd tutorial-part-four
 ```
+
+위의 작업을 완료한 후, `typography.js`와 `Emotion`을 사용해보겠습니다.
+
+```
+npm install gatsby-plugin-typography typography react-typography typography-theme-kirkham gatsby-plugin-emotion @emotion/react
+```
+
+설치를 완료했다면, 저번에 `tutorial-part-three`에서 만들었던 레이아웃을 만들어주세요!
+
+```javascript
+import React from "react";
+import { css } from "@emotion/react";
+import { Link } from "gatsby";
+
+import { rhythm } from "../utils/typography";
+
+export default function Layout({ children }) {
+  return (
+    <div
+      css={css`
+        margin: 0 auto;
+        max-width: 700px;
+        padding: ${rhythm(2)};
+        padding-top: ${rhythm(1.5)};
+      `}
+    >
+      <Link to={`/`}>
+        <h3
+          css={css`
+            margin-bottom: ${rhythm(2)};
+            display: inline-block;
+            font-style: normal;
+          `}
+        >
+          Pandas Eating Lots
+        </h3>
+      </Link>
+      <Link
+        to={`/about/`}
+        css={css`
+          float: right;
+        `}
+      >
+        About
+      </Link>
+      {children}
+    </div>
+  );
+}
+```
+
+```javascript
+import React from "react";
+import Layout from "../components/layout";
+
+export default function Home() {
+  return (
+    <Layout>
+      <h1>Amazing Pandas Eating Things</h1>
+      <div>
+        <img
+          src="https://2.bp.blogspot.com/-BMP2l6Hwvp4/TiAxeGx4CTI/AAAAAAAAD_M/XlC_mY3SoEw/s1600/panda-group-eating-bamboo.jpg"
+          alt="Group of pandas eating bamboo"
+        />
+      </div>
+    </Layout>
+  );
+}
+```
+
+```javascript
+import Typography from "typography";
+import kirkhamTheme from "typography-theme-kirkham";
+
+const typography = new Typography(kirkhamTheme);
+export default typography;
+export const rhythm = typography.rhythm;
+```
+
+```javascript
+module.exports = {
+  plugins: [
+    `gatsby-plugin-emotion`,
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/utils/typography`,
+      },
+    },
+  ],
+};
+```
+
+![image](https://user-images.githubusercontent.com/48292190/116035523-190a0f80-a6a0-11eb-8839-3f6def6fc0d5.png)
+
+정상적으로 레이아웃이 뜬다면 성공입니다. (정확한 코드는 `tutorial-part-four`에서 참조해주세요!)
+
+이제 `GraphQL`을 사용해볼 차례입니다.
+
+# 👾 첫 번째 GraphQL 쿼리
+
+사이트를 구축 할 때 사이트 제목과 같은 공통 데이터를 재사용하고 싶을 가 있을거예요. 그런 경우에는 한 위치에 제목을 저장하고 다른 파일에서 해당 위치를 참조할 수 있다면, 나중에 제목을 바꿀 일이 있으면 한 위치의 값만 바꾸면 모든 참조하던 값이 변경되게 되죠.
+
+`gatsby-config.js`에서 사이트 제목의 값을 추가해보도록 합시다.
+
+```javascript
+module.exports = {
+  siteMetadata: {
+    title: `Title from siteMetadata`,
+  },
+  plugins: [
+    `gatsby-plugin-emotion`,
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/utils/typography`,
+      },
+    },
+  ],
+};
+```
+
+그런 다음 개발서버를 껏다가 다시 켜보세요!
+
+## 🕵️‍♂️ 데이터를 가져와봅시다.
+
+이제 siteMetadata라는 속성에 title이라는 값이 있으니까 참조를 할 수 있습니다!
+페이지쿼리를 `about페이지`에서 사용해봅시다.
+
+```javascript
+import React from "react";
+import { graphql } from "gatsby";
+import Layout from "../components/layout";
+
+export default function About({ data }) {
+  console.log(data.site.siteMetadata.title);
+  return (
+    <Layout>
+      <h1>About {data.site.siteMetadata.title}</h1>
+      <p>
+        We're the only site running on your computer dedicated to showing the
+        best photos and videos of pandas eating lots of food.
+      </p>
+    </Layout>
+  );
+}
+
+export const query = graphql`
+  query {
+    site {
+      siteMetadata {
+        title
+      }
+    }
+  }
+`;
+```
+
+다음과 같이 작성을 해서 `/about`의 결과물을 확인해보세요!
+![image](https://user-images.githubusercontent.com/48292190/116040160-a05a8180-a6a6-11eb-898e-d7e0c9dd41af.png)
+
+잘 가져와진 모습을 볼 수 있습니다.
+여기서 **GrapghQL을 처음 접하는 사람들은 생소해고 이해가 잘 가지 않을것입니다.**
+
