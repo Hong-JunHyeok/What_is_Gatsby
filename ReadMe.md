@@ -880,6 +880,7 @@ http://localhost:8000/\_\_\_graphql
 그러면 우리가 siteMetadata에 title의 값을 가져와봅시다.
 
 **쿼리문**
+
 ```
 query MyQuery {
   site{
@@ -892,6 +893,7 @@ query MyQuery {
 ```
 
 **결과**
+
 ```json
 {
   "data": {
@@ -908,6 +910,7 @@ query MyQuery {
 잘 나오나요?
 
 ## GraphiQL Explorer 사용
+
 `GraphiQL Explorer`를 사용하면 쿼리를 입력하는 귀찮은 작업을 쉽게 수행할 수 있습니다.
 
 ![image](https://user-images.githubusercontent.com/48292190/116164826-713f2100-a735-11eb-81dd-b957f65757fc.png)
@@ -915,12 +918,14 @@ query MyQuery {
 Explorer부분에서 finder에서 문서를 찾는거처럼 클릭만 하면 자동으로 쿼리문이 동작하는 것을 볼 수 있죠! 굉장히 편안할겁니다.
 
 ## 소스 플러그인
+
 Gatsby 사이트의 데이터는 API, 데이터베이스, CMS, 로컬 파일 등 어디에서나 가져올 수 있습니다!
 
 파일 시스템의 파일을 가져오는 플러그인을 한번 설치해볼까요?
 `gatsby-source-filesystem`을 설치해야 합니다!
 
 프로젝트 루트에 다음과 같은 명령어를 수행해주세요
+
 ```
 npm install gatsby-source-filesystem
 ```
@@ -948,7 +953,7 @@ module.exports = {
       },
     },
   ],
-}
+};
 ```
 
 그리고 개발 서버를 다시 시작해볼까요?
@@ -975,7 +980,9 @@ query MyQuery {
   }
 }
 ```
+
 다음과 같은 쿼리를 작성해보고 실행시켜보면...
+
 ```json
 {
   "data": {
@@ -1027,7 +1034,105 @@ query MyQuery {
   "extensions": {}
 }
 ```
+
 이렇게, src내에 있는 파일들의 목록이 쫙 뜨게됩니다!
 
-### 얼마나 멋진가요!
+### 😎 얼마나 멋진가요!
+
+이제 페이지를 하나 더 만들어봅시다.
+
+`src/pages/my-files.js`를 만들어줍시다.
+
+그다음 소스코드를 다음과 같이 작성해줍시다.
+
+```js
+import React from "react";
+import { graphql } from "gatsby";
+import Layout from "../components/layout";
+
+export default function MyFiles({ data }) {
+  console.log(data);
+  return <Layout>Hello World</Layout>;
+}
+
+export const query = graphql`
+  query {
+    allFile {
+      edges {
+        node {
+          id
+          birthTime(fromNow: true)
+          base
+          accessTime
+          size
+          name
+        }
+      }
+    }
+  }
+`;
+```
+
+![image](https://user-images.githubusercontent.com/48292190/116166564-422aae80-a739-11eb-8db4-44d7ecc9b53e.png)
+
+잘 콘솔이 찍히나요?
+
+사실, 데이터를 가져오는 과정은 끝났는데, 여기서 끝나면 섭하니까 데이터를 HTML에 출력해보는 작업을 수행해보도록 하겠습니다.
+
+```js
+import React from "react"
+import { graphql } from "gatsby"
+import Layout from "../components/layout"
+
+export default function MyFiles({ data }) {
+  console.log(data)
+  return (
+    <Layout>
+      <div>
+        <h1>My Site's Files</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>relativePath</th>
+              <th>prettySize</th>
+              <th>extension</th>
+              <th>birthTime</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.allFile.edges.map(({ node }, index) => (
+              <tr key={index}>
+                <td>{node.relativePath}</td>
+                <td>{node.prettySize}</td>
+                <td>{node.extension}</td>
+                <td>{node.birthTime}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Layout>
+  )
+}
+
+export const query = graphql`
+  query {
+    allFile {
+      edges {
+        node {
+          birthTime(fromNow: true)
+          relativePath
+          prettySize
+          extension
+        }
+      }
+    }
+  }
+`
+```
+
+자, 놀라지 마세요 
+![image](https://user-images.githubusercontent.com/48292190/116166844-d268f380-a739-11eb-94b6-818a9a1b7192.png)
+
+### 🤓 파일 시스템으로 이렇게 멋진 기능을 구현할 수 있습니다.
 
