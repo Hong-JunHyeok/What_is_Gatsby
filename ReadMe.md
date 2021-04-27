@@ -1080,12 +1080,12 @@ export const query = graphql`
 사실, 데이터를 가져오는 과정은 끝났는데, 여기서 끝나면 섭하니까 데이터를 HTML에 출력해보는 작업을 수행해보도록 하겠습니다.
 
 ```js
-import React from "react"
-import { graphql } from "gatsby"
-import Layout from "../components/layout"
+import React from "react";
+import { graphql } from "gatsby";
+import Layout from "../components/layout";
 
 export default function MyFiles({ data }) {
-  console.log(data)
+  console.log(data);
   return (
     <Layout>
       <div>
@@ -1112,7 +1112,7 @@ export default function MyFiles({ data }) {
         </table>
       </div>
     </Layout>
-  )
+  );
 }
 
 export const query = graphql`
@@ -1128,11 +1128,221 @@ export const query = graphql`
       }
     }
   }
-`
+`;
 ```
 
-자, 놀라지 마세요 
+자, 놀라지 마세요
 ![image](https://user-images.githubusercontent.com/48292190/116166844-d268f380-a739-11eb-94b6-818a9a1b7192.png)
 
 ### 🤓 파일 시스템으로 이렇게 멋진 기능을 구현할 수 있습니다.
+
+이제 여러분은 소스 플러그인이 개츠비의 데이터 시스템에 어떻게 데이터를 가져오는지를 배웠습니다.
+
+# 🤖 Transformer 플러그인
+
+이 부분은 정말 중요한 부분입니다. 만약 Gatsby로 정적 블로그를 만들 예정에 있다면 이 부분을 정말 유심히 봐야할것입니다.
+<em>참고로 저도 기술블로그를 만들기 위해 Gatsby를 배우는 것입니다.</em>
+
+Transformer 플러그인은 소스 플러그인이 가져온 원시 콘텐츠를 변환하는 플러그인입니다. 무슨 말인지 잘 모르시겠다구요? 한번 천천히 살펴보자구요.
+
+`src/pages/sweet-pandas-eating-sweets.md`을 만들어줍시다.
+그 다음 `/my-files`페이지를 확인해볼까요?
+
+![image](https://user-images.githubusercontent.com/48292190/116168562-a7809e80-a73d-11eb-8bd5-0152261df96e.png)
+
+`gatsby-source-filesystem`은 항상 추가 할 새 파일을 검색하고 추가 할 때 쿼리를 다시 실행합니다.
+
+> 매우 강력하다구요!
+
+Transformer 플러그인?
+
+## 🤨 뭔진 몰라도 일단 따라해보면서 배웁시다!
+
+`gatsby-transformer-remark`를 다운받아봅시다.
+
+```
+yarn add gatsby-transformer-remark
+```
+
+그 다음 `gatsby-config`에 뭘 해주어야하는지 알겠죠?
+
+```js
+module.exports = {
+  siteMetadata: {
+    title: `Pandas Eating Lots`,
+  },
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `src`,
+        path: `${__dirname}/src/`,
+      },
+    },
+    `gatsby-transformer-remark`,
+    `gatsby-plugin-emotion`,
+    {
+      resolve: `gatsby-plugin-typography`,
+      options: {
+        pathToConfigModule: `src/utils/typography`,
+      },
+    },
+  ],
+};
+```
+
+이 작업을 완료해줬다면 개발서버를 다시 켜봅시다.
+![image](https://user-images.githubusercontent.com/48292190/116168827-4ad1b380-a73e-11eb-8e9d-4ab8119daec6.png)
+
+그러면 http://localhost:8000/\_\_\_graphql
+한번 확인을 해보면 `allMarkdownRemark`가 추가됩니다.
+
+```
+{
+  allMarkdownRemark {
+    edges {
+      node {
+        frontmatter {
+          title
+          date
+        }
+        html
+        excerpt
+        timeToRead
+      }
+    }
+  }
+}
+```
+
+다음 작업을 수행한 후 한번 보세요!
+
+```json
+{
+  "data": {
+    "allMarkdownRemark": {
+      "edges": [
+        {
+          "node": {
+            "frontmatter": {
+              "title": "Sweet Pandas Eating Sweets",
+              "date": "2017-08-10"
+            },
+            "html": "<p>Pandas are really sweet.</p>\n<p>Here's a video of a panda eating sweets.</p>\n<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/4n0xNbfJLR8\" frameborder=\"0\" allowfullscreen></iframe>",
+            "excerpt": "Pandas are really sweet. Here's a video of a panda eating sweets.",
+            "timeToRead": 1
+          }
+        }
+      ]
+    }
+  },
+  "extensions": {}
+}
+```
+
+정말 멋있지 않나요? 마크다운으로 작업한 내용이 html으로 `Transform`되었습니다!
+
+> 소스 플러그인은 데이터 를 Gatsby의 데이터 시스템으로 가져오고 변환기 플러그인은 소스 플러그인에서 가져온 원시 콘텐츠를 변환합니다
+
+`pages/index.js`에서 graphql작업을 해봅시다.
+어렵지 않아요!
+
+```js
+import React from "react";
+import { graphql } from "gatsby";
+import { css } from "@emotion/react";
+import { rhythm } from "../utils/typography";
+import Layout from "../components/layout";
+
+export default function Home({ data }) {
+  console.log(data);
+  return (
+    <Layout>
+      <div>
+        <h1
+          css={css`
+            display: inline-block;
+            border-bottom: 1px solid;
+          `}
+        >
+          Amazing Pandas Eating Things
+        </h1>
+        <h4>{data.allMarkdownRemark.totalCount} Posts</h4>
+        {data.allMarkdownRemark.edges.map(({ node }) => (
+          <div key={node.id}>
+            <h3
+              css={css`
+                margin-bottom: ${rhythm(1 / 4)};
+              `}
+            >
+              {node.frontmatter.title}{" "}
+              <span
+                css={css`
+                  color: #bbb;
+                `}
+              >
+                — {node.frontmatter.date}
+              </span>
+            </h3>
+            <p>{node.excerpt}</p>
+          </div>
+        ))}
+      </div>
+    </Layout>
+  );
+}
+
+export const query = graphql`
+  query {
+    allMarkdownRemark {
+      totalCount
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM, YYYY")
+          }
+          excerpt
+        }
+      }
+    }
+  }
+`;
+```
+![image](https://user-images.githubusercontent.com/48292190/116169258-4d80d880-a73f-11eb-9e36-1ce3e62a5725.png)
+
+음... 포스트가 하나라서 조금 없어보이네요! 포스트를 더 추가해보도록 하겠습니다.
+
+![image](https://user-images.githubusercontent.com/48292190/116169350-828d2b00-a73f-11eb-9c1b-ac953c8077cf.png)
+#### 저장하면 바로 적용되는 모습이 정말 매력적입니다.
+
+하지만 저는 포스트의 순서를 조금 바꾸고싶습니다...
+
+**다행히! 어려운 작업은 아니죠!**
+
+```
+{
+  allMarkdownRemark(sort: {order: DESC, fields: [frontmatter___date]}) {
+    totalCount
+    edges {
+      node {
+        id
+        frontmatter {
+          title
+          date(formatString: "DD MMMM, YYYY")
+        }
+        excerpt
+      }
+    }
+  }
+}
+
+```
+
+쿼리를 다음과 같이 바꿔주면 desc정렬을 해줍니다!
+
+### 여러분은 여러분만의 블로그를 만들 준비가 다 되었습니다!
+
+하지만 조금만 더 파볼까요? 그러면 **멋진 블로그**가 만들어질것 같습니다!
 
