@@ -871,7 +871,7 @@ export default function Layout({ children }) {
 > GraphiQL은 GraphQL 통합 개발 환경 (IDE)입니다. Gatsby 웹 사이트를 구축하는 동안 자주 사용하게 될 강력한 도구입니다.
 
 사이트의 개발 서버가 실행 중일때 다음 주소로 접속하면 됩니다.
-http://localhost:8000/\_\_\_graphql
+http://localhost:8000/___graphql
 
 ![image](https://user-images.githubusercontent.com/48292190/116164449-a4cd7b80-a734-11eb-8cb6-a37d21ef5d23.png)
 
@@ -1194,7 +1194,7 @@ module.exports = {
 이 작업을 완료해줬다면 개발서버를 다시 켜봅시다.
 ![image](https://user-images.githubusercontent.com/48292190/116168827-4ad1b380-a73e-11eb-8e9d-4ab8119daec6.png)
 
-그러면 http://localhost:8000/\_\_\_graphql
+그러면 http://localhost:8000/___graphql
 한번 확인을 해보면 `allMarkdownRemark`가 추가됩니다.
 
 ```
