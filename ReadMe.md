@@ -1405,3 +1405,217 @@ exports.onCreateNode = ({ node, getNode }) => {
 ![image](https://user-images.githubusercontent.com/48292190/116178336-54fcad80-a750-11eb-8bcd-5086f9870018.png)
 
 이렇게 하면 파일의 이름을 가져올 수 있습니다.
+`gatsby-source-filesystem`플러그인에는 슬러그를 만드는 기능이 함께 제공됩니다
+
+어렵지 않으니 한번 해볼까요?
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`);
+
+exports.onCreateNode = ({ node, getNode }) => {
+  if (node.internal.type === `MarkdownRemark`) {
+    console.log(createFilePath({ node, getNode, basePath: `pages` }));
+  }
+};
+```
+
+이렇게 작성하면 슬러그가 자동으로 생성된 것을 볼 수 있죠?
+**이제 새 슬러그를 MarkdownRemark노드에 직접 추가 할 수 있습니다 .**
+
+![image](https://user-images.githubusercontent.com/48292190/116334772-bc7a3200-a810-11eb-9297-b2d85df5c0b4.png)
+
+`createNodeField`를 사용하면 이를 더욱 쉽게 구현할 수 있습니다.
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`);
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions;
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` });
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    });
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/48292190/116335242-7a9dbb80-a811-11eb-9bd6-42453fdad513.png)
+
+그러면 노드필드에 slug라는 이름의 필드를 만들어줍니다.
+
+이제 다음과 같은 작업을 수행해줍시다.
+
+```js
+const { createFilePath } = require(`gatsby-source-filesystem`);
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions;
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` });
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    });
+  }
+};
+
+exports.createPages = async ({ graphql, actions }) => {
+  // **Note:** graphql은 Promise를 리턴합니다.
+  const result = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `);
+  console.log(JSON.stringify(result, null, 4));
+};
+```
+
+그러면 콘솔창에
+
+![image](https://user-images.githubusercontent.com/48292190/116335527-fc8de480-a811-11eb-9cab-1730b460cdea.png)
+
+정상적으로 잘 나오는것을 확인할 수 있죠?
+
+**아까도 설명했지만, 페이지를 만드는 단계는**
+
+1. GraphQL로 데이터 쿼리
+2. 쿼리 결과를 페이지에 매핑
+
+**입니다**
+
+자, 따라해보세요
+`src/templates`를 만들고 `blog-post.js` 파일을 추가합시다.
+
+다음과 같이 작성합니다.
+
+```js
+import React from "react";
+import Layout from "../components/layout";
+
+export default function BlogPost() {
+  return (
+    <Layout>
+      <div>Hello Blog Post</div>
+    </Layout>
+  );
+}
+```
+
+그 다음 `gatsby-node.js`를 업데이트 해줍니다.
+
+```js
+const path = require(`path`);
+const { createFilePath } = require(`gatsby-source-filesystem`);
+
+exports.onCreateNode = ({ node, getNode, actions }) => {
+  const { createNodeField } = actions;
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` });
+    createNodeField({
+      node,
+      name: `slug`,
+      value: slug,
+    });
+  }
+};
+
+exports.createPages = async ({ graphql, actions }) => {
+  const { createPage } = actions;
+  const result = await graphql(`
+    query {
+      allMarkdownRemark {
+        edges {
+          node {
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    }
+  `);
+
+  result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    createPage({
+      path: node.fields.slug,
+      component: path.resolve(`./src/templates/blog-post.js`),
+      context: {
+        // Data passed to context is available
+        // in page queries as GraphQL variables.
+        slug: node.fields.slug,
+      },
+    });
+  });
+};
+```
+
+### 🤨자... 많이 지루하셨죠?
+
+이제 gatsby의 404페이지로 한번 가봅시다.
+
+> ## 404페이지를 어떻게가요?
+>
+> 주소창에 `http://localhost:8000/sdf`처럼 그냥 아무런 슬러그가 없는 주소로 들어가시면 gatsby에서 자동으로 404페이지로 이동시켜줍니다.
+
+들어가보면 어떤화면이 보이시나요?
+
+![image](https://user-images.githubusercontent.com/48292190/116336812-28aa6500-a814-11eb-90c4-9b93014ae4a9.png)
+
+네...! 우리가 아까 만들었던 .md파일들이 전부 page로 바뀐모습을 볼 수 있죠?
+
+하지만 페이지에 들어가보면 아직 우리가 원하는 내용은 아닙니다! 왜냐하면...
+
+![image](https://user-images.githubusercontent.com/48292190/116336911-4d9ed800-a814-11eb-8875-f1da75c06bbf.png)
+
+아직 제목,내용을 적지 않았거든요!
+
+우리가 데이터를 가져올땐 무엇을 사용한다고 했죠?
+
+### 그렇죠! 바로 `GraphQL`입니다 🤗
+
+```js
+import React from "react";
+import { graphql } from "gatsby";
+import Layout from "../components/layout";
+
+export default function BlogPost({ data }) {
+  const post = data.markdownRemark;
+  return (
+    <Layout>
+      <div>
+        <h1>{post.frontmatter.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: post.html }} />
+      </div>
+    </Layout>
+  );
+}
+
+export const query = graphql`
+  query($slug: String!) {
+    markdownRemark(fields: { slug: { eq: $slug } }) {
+      html
+      frontmatter {
+        title
+      }
+    }
+  }
+`;
+```
+
+이제 페이지에 들어가보면
+
+# 😋 와우!! 드디어 기능을 구현했네요!
+
+![image](https://user-images.githubusercontent.com/48292190/116337427-0b29cb00-a815-11eb-9040-7caf850920b5.png)
